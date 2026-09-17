@@ -1,0 +1,88 @@
+## set working directory
+setwd("C:/Users/gerritse/Documents/r-tutorial")
+
+## load R data
+load("Enquete_Mobilite.Rdata")
+
+## View
+View(Mobilite_data)
+
+## install package descriptive
+install.packages("dplyr")
+library(dplyr)
+
+## Manipulate
+
+# table
+table(Mobilite_data$Mode_principal)
+table(Mobilite_data$Distance_lieuetudes)
+
+# arrange
+Mobilite_data <- arrange(Mobilite_data, Nombre_modes_transport)
+
+# filter
+Bacheliers <- filter(Mobilite_data, A7P_Age=="Moins de 21 ans")
+
+## Statistics 
+
+# mean
+mean(Mobilite_data$mp_voiture, na.rm=TRUE)
+
+mean(Mobilite_data$Voiture_10fois, na.rm=TRUE)
+
+# conditional mean
+mean(subset(Mobilite_data$mp_voiture,
+            Mobilite_data$Distance_lieuetudes=="11-15 kilomètres"), na.rm=TRUE)
+
+mean(subset(Mobilite_data$mp_voiture,
+            Mobilite_data$Distance_lieuetudes=="21-30 kilomètres"), na.rm=TRUE)
+
+
+mean(subset(Mobilite_data$Voiture_10fois,
+            Mobilite_data$Distance_lieuetudes=="11-15 kilomètres"), na.rm=TRUE)
+
+mean(subset(Mobilite_data$Voiture_10fois,
+            Mobilite_data$Distance_lieuetudes=="21-30 kilomètres"), na.rm=TRUE)
+
+
+## Create subsamples with treatment and control
+
+# draw subsample
+
+# sample1=500
+n_sample1 <- 500
+sample1_Nr <- sample(x = Mobilite_data$Nr, size = n_sample1)
+
+sample_1 <- filter(Mobilite_data, Nr %in% sample1_Nr)
+
+# create treated group
+
+# sample1=500
+treatment_sample1 <- mutate(sample_1, treated1 = sample(c(0, 1), size = n_sample1, replace = TRUE)
+)
+
+# Verify similarity
+
+# sample1=500
+mean(subset(treatment_sample1$mp_voiture,
+            treatment_sample1$treated1==1), na.rm=TRUE)
+
+mean(subset(treatment_sample1$mp_voiture,
+            treatment_sample1$treated1==0), na.rm=TRUE)
+
+
+# sample2=2000
+
+n_sample2 <- 2000
+sample2_Nr <- sample(x = Mobilite_data$Nr, size = n_sample2)
+
+sample_2 <- filter(Mobilite_data, Nr %in% sample2_Nr)
+
+treatment_sample2 <- mutate(sample_2, treated2 = sample(c(0, 1), size = n_sample2, replace = TRUE)
+)
+
+mean(subset(treatment_sample2$mp_voiture,
+            treatment_sample2$treated2==1), na.rm=TRUE)
+
+mean(subset(treatment_sample2$mp_voiture,
+            treatment_sample2$treated2==0), na.rm=TRUE)
