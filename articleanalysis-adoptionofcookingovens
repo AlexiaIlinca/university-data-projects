@@ -1,0 +1,75 @@
+# Charger le jeu de données
+load("C:/Users/franc/OneDrive - UCL/Documents/Université/Mineure/LECGE1325 Transition et développement durable/Mainvariables_cookstove_hh.Rdata")
+
+# Afficher les premières lignes du jeu de données
+head(household_data)
+
+# Installer et charger les packages nécessaires
+install.packages("dplyr")
+library(dplyr)
+
+# Installer et charger le package ggplot2 pour la visualisation
+install.packages("ggplot2")
+library(ggplot2)
+ind_data <- new_individual_data
+
+# Identifier les contraintes potentielles à l'adoption des foyers de cuisson propres
+# 1. Coût initial élevé
+# 2. Préférences culturelles et sociales
+# 3. Problèmes de maintenance et de durabilité
+# 4. Disponibilité des ressources
+# 5. Manque de sensibilisation et d'information
+
+
+#2
+# Calculer la moyenne de la variable "Scaste_tribe_BL" pour le groupe des gagnants de la loterie (Lottery1 = 1)
+#ici on regarde la moyenne des personne qui appartiennent à la classe minoritaire qui ont été selectionner comme gagnants
+mean(new_household_data$Scaste_tribe_BL[new_household_data$Lottery1 == 1], na.rm = TRUE)
+0.4186603
+# Calculer la moyenne de la variable "Scaste_tribe_BL" pour le groupe des perdants de la loterie (Lottery1 = 0)
+#ici on regarde la moyenne des personne qui appartiennent à la classe minoritaire qui ont été selectionner comme perdant
+mean(new_household_data$Scaste_tribe_BL[new_household_data$Lottery1 == 0], na.rm = TRUE)
+0.4019934
+
+#3
+# Définir la taille de l'échantillon
+n_sample1 <- 500
+# Sélectionner aléatoirement les identifiants uniques pour l'échantillon
+sample1_Nr <- sample(unique(new_household_data$hhid_M), size = n_sample1)
+# Filtrer les données pour inclure uniquement les individus de l'échantillon
+sample_1 <- filter(new_household_data, hhid_M %in% sample1_Nr)
+# Créer une variable "treated1" qui attribue aléatoirement le traitement (0 ou 1) à chaque individu
+treatment_sample1 <- mutate(sample_1, treated1 = sample(c(0, 1), size = n_sample1, replace = TRUE))
+# Calculer la moyenne de la variable "Scaste_tribe_BL" pour le groupe traité (lottery = 1)
+mean_scaste_traitement <- mean(treatment_sample1$Scaste_tribe_BL[treatment_sample1$Lottery1 == 1], na.rm = TRUE)
+0.4428571
+# Calculer la moyenne de la variable "Scaste_tribe_BL" pour le groupe témoin (lottery = 0)
+mean_scaste_controle <- mean(treatment_sample1$Scaste_tribe_BL[treatment_sample1$Lottery1 == 0], na.rm = TRUE)
+0.3866171
+#conclusion avec un echantillon de 500 on remarque une légère difference entre les deux groupes
+
+# Définir la taille de l'échantillon
+n_sample2 <- 1000
+# Sélectionner aléatoirement les identifiants uniques pour l'échantillon de taille 1000
+sample2_Nr <- sample(unique(new_household_data$hhid_M), size = n_sample2)
+echantillon_1000 <- filter(new_household_data, hhid_M %in% sample2_Nr)
+# Créer une variable "treated2" qui attribue aléatoirement le traitement (0 ou 1) à chaque individu dans l'échantillon de taille 1000
+treatment_echantillon_1000 <- mutate(echantillon_1000, Lottery1 = sample(c(0, 1), size = n_sample2, replace = TRUE))
+# Calculer la moyenne de la variable "Scaste_tribe_BL" pour le groupe traité (lottery = 1) dans l'échantillon de taille 1000
+mean_scaste_traitement_1000 <- mean(treatment_echantillon_1000$Scaste_tribe_BL[treatment_echantillon_1000$Lottery1 == 1], na.rm = TRUE)
+0.4008621
+# Calculer la moyenne de la variable "Scaste_tribe_BL" pour le groupe témoin (lottery = 0) dans l'échantillon de taille 1000
+mean_scaste_controle_1000 <- mean(treatment_echantillon_1000$Scaste_tribe_BL[treatment_echantillon_1000$Lottery1 == 0], na.rm = TRUE)
+0.3844581
+#pour l'echantillon de 1000 cet ecart diminue 
+
+# Répéter le processus pour un échantillon de taille 1500
+n_sample3 <- 1500
+sample3_Nr <- sample(unique(new_household_data$hhid_M), size = n_sample3)
+echantillon_1500 <- filter(new_household_data, hhid_M %in% sample3_Nr)
+treatment_echantillon_1500 <- mutate(echantillon_1500, Lottery1 = sample(c(0, 1), size = n_sample3, replace = TRUE))
+mean_scaste_traitement_1500 <- mean(treatment_echantillon_1500$Scaste_tribe_BL[treatment_echantillon_1500$Lottery1 == 1], na.rm = TRUE)
+0.4172275
+mean_scaste_controle_1500 <- mean(treatment_echantillon_1500$Scaste_tribe_BL[treatment_echantillon_1500$Lottery1 == 0], na.rm = TRUE)
+0.397037
+#pour le dernier echantillon l'écart diminue en
